@@ -1,0 +1,4 @@
+# .idea/ files to ignore
+*.xml
+*.iml
+*.pyc

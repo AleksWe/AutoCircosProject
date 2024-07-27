@@ -1,9 +1,15 @@
 import logging
 import sys
-import textwrap
-
-import plotting
+from subprocess import Popen, PIPE
+import plotting as p
 import configparser
+import os
+
+
+# Selecting info about file names in config.ini
+META_DATA = "metadata.ini"
+# Path
+PATH = "circos.conf"
 
 
 def create_logger():
@@ -18,7 +24,6 @@ def meta_data(META_DATA):
     configParser = configparser.RawConfigParser()
     configParser.read(META_DATA)
     return configParser
-
 
 # def total_modifier(modification, circos_conf):
 #     if modification == 1:
@@ -52,18 +57,24 @@ def plot_generator(config):
         new_circos_conf = ''
         kariotype = config.get('MetaData', 'karyotype')
         try:
-            plot_info = int(config.get('GeneralPlotData', 'number_of_plots'))
-        except ValueError as e:
+            plot_info = int(config.get('GeneralPlotData', 'number_of_plots'))  # for GUI it shouldn't be possible not to write a number
+        except ValueError as e:                                                # f.ex it could be checked out on frontend side
             logging.error(f"   INFO: {e} - Not a valid value. Enter a number.")
-        new_circos_conf = 'karyotype = ' + kariotype + '\n' + '<<include ideogram.conf>>' + '\n'
+            sys.exit(0)
+        new_circos_conf += p.Plotter.kariotype_adder(kariotype)
+        new_circos_conf += p.Plotter.ideogram_adder()
+        new_circos_conf += p.Plotter.plot_starter()
+        plotter_one = p.Plotter(file=config.get('MetaData', 'gene_name'))
+        new_circos_conf += plotter_one.name_plotter()
         for i in range(plot_info):
             file = config.get('DetailPlotInfo', 'file')
             r1 = config.get('DetailPlotInfo', 'r1')
             r0 = config.get('DetailPlotInfo', 'r0')
-            plotter = plotting.Plotter(file, r0, r1)
+            plotter = p.Plotter(file, r0, r1)
             new_plot = plotter.line_plotting()
             new_circos_conf += new_plot
-        new_circos_conf += plotter.image_adder()
+        new_circos_conf += p.Plotter.plot_ender()
+        new_circos_conf += p.Plotter.image_adder()
         return new_circos_conf
     except configparser.NoSectionError as e:
         logging.error(f"   INFO: {e} - Not a valid value. Validate meta_data.ini data.")
@@ -86,10 +97,10 @@ def color_modifier(circos_conf):
     return circos_conf
 
 
-def config_reader(path):
-    with open(path) as f:
-        circos_conf = f.read()
-    return circos_conf
+#def config_reader(path):
+#    with open(path) as f:
+#        circos_conf = f.read()
+#    return circos_conf
 
 
 def config_writer(new_config, name):
@@ -98,17 +109,20 @@ def config_writer(new_config, name):
 
 
 def main():
-    META_DATA = "metadata.ini"
-    PATH = "circos.conf"
-
+    # Calling function to log every step of the way
     create_logger()
-    logging.info("   INFO: starting data reading")
+    #logging.info("   INFO: starting data reading")
 
-    # circos_conf = config_reader(PATH)
-    #modification_starter(configer)
+    # Creating config variable that holds all names from META_DATA
+    config = meta_data(META_DATA)
 
-    configer = meta_data(META_DATA)
-    config_writer(plot_generator(configer), PATH)
+    # Generating .txt files from .R script for config.ini
+    files = [config.get('RScripts', 'fasta_1'), config.get('RScripts', 'fasta_2')]
+
+    # Write a newly generated circos.conf to file
+    config_writer(plot_generator(config), PATH)
+
+    # modification_starter(configer)
 
 
 if __name__ == '__main__':
