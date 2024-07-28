@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AutoCircos Generator Project</title>
+</head>
+<body>
+<h1> Choose your circos elements: </h1>
+<p>Change the background color of a button with the background-color property:</p>
+    <form method="post" action='/upload' enctype='multipart/form-data'>
+    <input type="radio" id="R1" name="rodzaj wykresu" value="liniowy">
+    <label for="R1">Wykres liniowy</label><br>
+    <input type="radio" id="R2" name="rodzaj wykresu" value="slupkowy">
+    <label for="R2">Wykres słupkowy</label><br>
+    <input name='files' type='file' multiple>
+    <input type='submit'>
+    </form>
+</body>
+</html>
