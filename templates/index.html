@@ -2,16 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AutoCircos Generator Project</title>
 </head>
 <body>
-<h1> Choose your circos elements: </h1>
-<p>Change the background color of a button with the background-color property:</p>
-    <form method="post" action='/upload' enctype='multipart/form-data'>
-    <input type="radio" id="R1" name="rodzaj wykresu" value="liniowy">
+<h1>AutoCircos Generator Project v1.0:</h1>
+<p>Choose how many charts you want to display.</p>
+<label for checkbox_number>Number of circos charts:</label>
+<input id="checkbox_number" name="checkbox_number" type="number" size="1" maxlength="1" value="0">
+<div class="inputs"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(window).ready(function() {
+    $('#checkbox_number').on('keyup mouseup', function() {
+        var number = parseInt($(this).val());
+        $('input[type="checkbox"]').remove();
+        $('label[class="to_del"]').remove();
+        for (var i=1;i<=number;i++) {
+            var data = '<label for="checkbox" class="to_del">Label of my checkbox</label><input id="checkbox'+i+'" type="checkbox" name="checkbox[]" value="'+i+'">';
+        }
+        $('.inputs').append(data);
+    });
+});
+</script>
+
+<!-- <p>Change the background color of a button with the background-color property:</p> -->
+<p>-----</p>
+<p>Choose your .fasta file(s):</p>
+<form method="post" action='/upload' enctype='multipart/form-data'>
+    <!-- <input type="radio" id="R1" name="rodzaj wykresu" value="liniowy">
     <label for="R1">Wykres liniowy</label><br>
     <input type="radio" id="R2" name="rodzaj wykresu" value="slupkowy">
-    <label for="R2">Wykres słupkowy</label><br>
+    <label for="R2">Wykres słupkowy</label><br> -->
     <input name='files' type='file' multiple>
     <input type='submit'>
     </form>
