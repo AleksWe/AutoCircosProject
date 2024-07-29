@@ -1,13 +1,22 @@
+from pathlib import Path
+
 import uvicorn
 from typing import List
 from fastapi.responses import HTMLResponse
 from fastapi import FastAPI, Form, File, UploadFile, Request
 from fastapi.templating import Jinja2Templates
 import subprocess
+from fastapi.middleware.cors import CORSMiddleware
+from starlette.staticfiles import StaticFiles
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
+app.mount(
+    "/static",
+    StaticFiles(directory=Path(__file__).parent.absolute() / "static"),
+    name="static",
+)
 
 @app.post("/upload")
 def upload(request: Request,
