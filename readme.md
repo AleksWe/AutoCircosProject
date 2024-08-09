@@ -1,4 +1,5 @@
 # AutoCircos project
+![](banner.png)
 
 ## Program goal
 Automatic generation of Circos for visualisation of genomic data based on 
