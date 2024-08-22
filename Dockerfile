@@ -9,6 +9,11 @@ RUN apt-get update && \
 # Base R image
 FROM rocker/r-base:latest
 
+# Install R packages
+RUN install2.r --error \
+    spider \
+    ape
+
 # Copy folder files to current directory
 COPY . .
 

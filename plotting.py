@@ -18,9 +18,9 @@ class Plotter:
         return '<<include ideogram.conf>>' + '\n'
 
     @staticmethod
-    def kariotype_adder(file):
-        kariotype = file
-        return 'karyotype = ' + kariotype + '\n'
+    def karyotype_adder(file):
+        karyotype = file
+        return 'karyotype = ' + karyotype + '\n'
 
     def name_plotter(self):
         result = f"""<plot>
@@ -53,7 +53,6 @@ class Plotter:
         result = f"""
             <plot>
             type	= scatter
-            #max_gap = 1u
             file    = {self.file}
             min     = 0
             max     = 430
@@ -67,6 +66,15 @@ class Plotter:
             stroke_color     = dred
             stroke_thickness = 1
             
+            <axes>
+            <axis>
+            spacing   = 0.05r
+            color     = lgrey
+            thickness = 1
+            
+            </axis>
+            </axes>
+            
             </plot>
         """
         result = result.replace(' ', '')
@@ -76,11 +84,36 @@ class Plotter:
         result = f"""
             <plot>
             type	= line
-            #max_gap = 1u
             file    = {self.file}
             color   = vvdred
             min     = 0
             max     = 430
+            r0      = {self.r0}
+            r1      = {self.r1}
+            thickness = 3
+
+            <axes>
+            <axis>
+            spacing   = 0.05r
+            color     = lgrey
+            thickness = 1
+
+            </axis>
+            </axes>
+
+            </plot>
+        """
+        result = result.replace(' ', '')
+        return result
+
+    def bar_plotting(self):
+        result = f"""
+            <plot>
+            type	= histogram
+            file    = {self.file}
+            color   = vvdred
+            min  = 0
+            max  = 7.5
             r0      = {self.r0}
             r1      = {self.r1}
             thickness = 3
@@ -104,3 +137,4 @@ class Plotter:
         result = f"""<image>\n<<include etc/image.conf>>\n</image>\n\n<<include etc/colors_fonts_patterns.conf>>\n<<include etc/housekeeping.conf>>
         """
         return result
+

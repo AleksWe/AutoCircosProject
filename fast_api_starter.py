@@ -37,22 +37,13 @@ def config_writer(meta_data, config):
 
 
 @app.post("/upload")
-async def upload(request: Request,
+async def upload(options: List[str] = Form(...),
                  files: List[UploadFile] = File(...)):
     # Read the form data from the request
-    form_data = await request.form()
+    selected_options = options
 
-    # Extract the chart selections dynamically
-    chart_type = {}
-    chart_count = 0
-    for key, value in form_data.items():
-        if key.startswith('chart') and not value.isdigit():
-            chart_type[key] = value
-        if key == 'chartCount':
-            chart_count = value
-    print(chart_type)
-
-    # For now, we will just print the option and the file name
+    # For now, we will just print the options and the file names
+    print(f"Chosen options: {selected_options}")
     print(f"Uploaded Files: {[file.filename for file in files]}")
     for file in files:
         try:
@@ -71,27 +62,30 @@ async def upload(request: Request,
     if not config.has_section('OverallPlotInfo'):
         config.add_section('OverallPlotInfo')
 
-    fasta_iter = 1
+    #fasta_iter = 1 # variable for future development of more than single fasta file
     for file in files:
         if file.filename.endswith('fasta'):
-            config.set('MetaData', f'fasta{fasta_iter}', file.filename)
-            fasta_iter += 1
+            config.set('MetaData', f'fasta', file.filename)
+            # fasta_iter += 1
         elif file.filename.find('karyotype') >= 0:  # for improvement
             config.set('MetaData', 'karyotype', file.filename)
         elif file.filename.find('gene_name') >= 0:  # for improvement
             config.set('MetaData', 'gene_name', file.filename)
 
-    config.set('OverallPlotInfo', 'number_of_plots', chart_count)
-
-    file_iter = 1
     for file in files:
-        for value in chart_type.values():
-            if file.filename.find('snp') >= 0:
-                config.set('OverallPlotInfo', f'file{file_iter}', file.filename)
-                config.set('OverallPlotInfo', f'plot_type{file_iter}', value)
-                config.set('OverallPlotInfo', f'r0{file_iter}', '0.895r')
-                config.set('OverallPlotInfo', f'r1{file_iter}', '0.995r')
-                file_iter += 1
+        for option in selected_options:
+            if file.filename.find('snp') >= 0 and option == 'SNP':
+                if file.filename.endswith('perc.txt'):
+                    config.set('OverallPlotInfo', f'file_snp_perc', file.filename)
+                elif file.filename.endswith('snp.txt'):
+                    config.set('OverallPlotInfo', f'file_snp', file.filename)
+            elif file.filename.find('ind') >= 0 and option == 'IND':
+                if file.filename.endswith('perc.txt'):
+                    config.set('OverallPlotInfo', f'file_ind_perc', file.filename)
+                elif file.filename.endswith('ind.txt'):
+                    config.set('OverallPlotInfo', f'file_ind', file.filename)
+            elif file.filename.find('popGenome') >= 0 and option == 'P_DIV':
+                config.set('OverallPlotInfo', f'file_p_div', file.filename)
 
     # Overwriting metadata.ini file:
     config_writer(meta_data, config)
@@ -107,5 +101,5 @@ def get_form(request: Request):
 
 
 # Only for testing purposes
-#if __name__ == '__main__':
-#    uvicorn.run(app, host='127.0.0.1', port=8000)
+if __name__ == '__main__':
+    uvicorn.run(app, host='127.0.0.1', port=8000)

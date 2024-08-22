@@ -37,7 +37,7 @@ Docker on Linux
 2) After installing Docker on your Linux, 
    - Use the following command to run the docker image:
    ```docker
-   docker run -it --name circos_docker_v2 -p 8000:8000 circos_docker_v2
+   docker run --rm -it --name circos_docker_v2 -p 8000:8000 circos_docker_v2
    ```
    - Access API at http://0.0.0.0:8000/. After selecting all options, click on the **submit** button.
    - After getting the final "circos.png created" message at your terminal, copy created visualisation from docker to

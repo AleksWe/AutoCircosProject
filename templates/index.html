@@ -9,28 +9,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AutoCircos Generator</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="{{ url_for('static', path='/css/styles.css') }}" rel="stylesheet">
 </head>
 <body>
-    <h1>AutoCircos Project v1.0:</h1>
-    <div>
-        <label for="numRadioGroups">Select the number of charts to be displayed on circos (max 8):</label>
-        <input type="number" id="numRadioGroups" min="0" max="8" />
-        <button id="generate">Generate</button>
-    </div>
-    <form id="chartForm" method="post" action="/upload" enctype="multipart/form-data">
-    <input type="hidden" name="chartCount" id="chartCount">
-    <div id="radioContainer"></div>
-    <!-- type="text/javascript" src="/js/chart_details.js"></script> -->
-    <script></script>
-<!-- <p>Change the background color of a button with the background-color property:</p> -->
-    <p>-----</p>
-    <b>Submit all necessary files:</b><br/>
-<!-- <form method="post" action='/upload' enctype='multipart/form-data'> -->
-    <input name='files' type='file' multiple>
-    <input type='submit'>
-</form>
-<script type="text/javascript" src="static/js/chart_details.js"></script>
+    <h1>AutoCircos Project v1.1:</h1>
+    <form action="http://localhost:8000/upload" method="post" enctype="multipart/form-data" id="form2">
+        <label>
+            <input type="checkbox" name="options" value="SNP" id="SNP" onchange="toggleSendButton()">
+            SNP
+        </label><br>
+        <label>
+            <input type="checkbox" name="options" value="IND" id="IND" onchange="toggleSendButton()">
+            IND
+        </label><br>
+        <label>
+            <input type="checkbox" name="options" value="P_DIV" id="P_DIV" disabled>
+            P_DIV
+        </label><br>
+        <script>
+        function toggleSendButton() {
+            const checkbox1 = document.getElementById('SNP').checked;
+            const checkbox2 = document.getElementById('IND').checked;
+
+            document.getElementById('P_DIV').disabled = !(checkbox1 || checkbox2);
+        }
+        </script>
+
+        <script>
+            document.getElementById('form2').addEventListener('submit', function(event) {
+                var checkboxes = this.querySelectorAll('input[type="checkbox"]');
+                var allUnchecked = Array.from(checkboxes).every(checkbox => !checkbox.checked);
+
+                if (allUnchecked) {
+                    alert('Please check all the boxes before submitting.');
+                    event.preventDefault(); // Prevent form submission
+                }
+            });
+        </script>
+
+        <p>-------</p>
+        <b>Submit all necessary files:</b>
+        <p style="padding: 0px; margin: 0px;">
+            <span style="font-size: 59%; ">
+            (such as gene_name.txt, karyotype etc...)
+            </span>
+        </p><br>
+        <input type="file" id="files" name="files" multiple required>
+        <input type="submit" value="Submit">
+    </form>
 </body>
 </html>
