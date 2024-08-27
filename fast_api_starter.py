@@ -8,7 +8,6 @@ from fastapi.responses import HTMLResponse
 from fastapi import FastAPI, Form, File, UploadFile, Request
 from fastapi.templating import Jinja2Templates
 import subprocess
-from fastapi.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
 
 meta_data = "metadata.ini"

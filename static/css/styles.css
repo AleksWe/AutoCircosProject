@@ -1,6 +1,7 @@
-.radio-group {
-    margin: 5px 0;
+.card.inset {
+  margin: 20px;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.5);
 }
-.group-label {
-    font-weight: bold;
+.ml-1 {
+  margin-left: 5px !important;
 }

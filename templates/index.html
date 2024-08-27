@@ -8,53 +8,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link href="{{ url_for('static', path='/css/styles.css') }}" rel="stylesheet">
     <title>AutoCircos Generator</title>
 </head>
 <body>
-    <h1>AutoCircos Project v1.1:</h1>
+    <div class="shadow p-3 mb-2 bg-primary bg-gradient text-white"><h1>AutoCircos Project v1.2:</h1></div><br>
+    <div class="ml-1 fs-5 fw-semibold text-primary">Select analyses:</div>
+    <div class="ml-1 form-text">P_DIV available only after selecting any of the other two options.</div>
     <form action="http://localhost:8000/upload" method="post" enctype="multipart/form-data" id="form2">
-        <label>
-            <input type="checkbox" name="options" value="SNP" id="SNP" onchange="toggleSendButton()">
-            SNP
-        </label><br>
-        <label>
-            <input type="checkbox" name="options" value="IND" id="IND" onchange="toggleSendButton()">
-            IND
-        </label><br>
-        <label>
-            <input type="checkbox" name="options" value="P_DIV" id="P_DIV" disabled>
-            P_DIV
-        </label><br>
-        <script>
-        function toggleSendButton() {
-            const checkbox1 = document.getElementById('SNP').checked;
-            const checkbox2 = document.getElementById('IND').checked;
-
-            document.getElementById('P_DIV').disabled = !(checkbox1 || checkbox2);
-        }
-        </script>
-
-        <script>
-            document.getElementById('form2').addEventListener('submit', function(event) {
-                var checkboxes = this.querySelectorAll('input[type="checkbox"]');
-                var allUnchecked = Array.from(checkboxes).every(checkbox => !checkbox.checked);
-
-                if (allUnchecked) {
-                    alert('Please check all the boxes before submitting.');
-                    event.preventDefault(); // Prevent form submission
-                }
-            });
-        </script>
-
-        <p>-------</p>
-        <b>Submit all necessary files:</b>
-        <p style="padding: 0px; margin: 0px;">
-            <span style="font-size: 59%; ">
-            (such as gene_name.txt, karyotype etc...)
-            </span>
-        </p><br>
-        <input type="file" id="files" name="files" multiple required>
-        <input type="submit" value="Submit">
+        <div class="w-25 col-md-4">
+            <div class="card inset">
+                <label>
+                    <input class="ml-1 fs-5 form-check-input" type="checkbox" name="options" value="SNP" id="SNP" onchange="toggleSendButton()">
+                    <label class="fs-5 form-check-label" for="SNP">
+                    SNP
+                </label><br>
+                <label>
+                    <input class="ml-1 fs-5 form-check-input" type="checkbox" name="options" value="IND" id="IND" onchange="toggleSendButton()">
+                    <label class="fs-5 form-check-label" for="IND">
+                    IND
+                </label><br>
+                <label>
+                    <input class="ml-1 fs-5 form-check-input" type="checkbox" name="options" value="P_DIV" id="P_DIV" disabled>
+                    <label class="fs-5 form-check-label" for="P_DIV">
+                    P_DIV
+                </label>
+            </div>
+        </div>
+        <script type="text/javascript" src="/static/js/chart_details.js"></script><br>
+        <div class="ml-1 fs-5 fw-semibold text-primary">Submit all necessary files:</div>
+        <div class="ml-1 form-text" id="basic-addon4">(such as gene_name.txt, karyotype etc...)</div><br>
+        <input class="w-25 ml-1 d-inline form-control" type="file" id="files" name="files" multiple required><br><br>
+        <input type="submit" value="Submit" class="ml-1 btn btn-primary">
     </form>
+<link rel="stylesheet" href="/static/js/bootstrap.min.js">
 </body>
 </html>

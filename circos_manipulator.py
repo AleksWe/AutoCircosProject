@@ -1,9 +1,7 @@
 import logging
 import sys
-from subprocess import Popen, PIPE
 import plotting as p
 import configparser
-import os
 
 # Selecting info about file names in config.ini
 META_DATA = "metadata.ini"
@@ -34,11 +32,6 @@ def plot_generator(config):
     try:
         new_circos_conf = ''
         karyotype = config.get('MetaData', 'karyotype')
-        # try:
-        #     plot_info = int(config.get('OverallPlotInfo', 'number_of_plots'))
-        # except ValueError as e:
-        #     logging.error(f"   INFO: {e} - Not a valid value. Enter a number.")
-        #     sys.exit(0)
         new_circos_conf += p.Plotter.karyotype_adder(karyotype)
         new_circos_conf += p.Plotter.ideogram_adder()
         new_circos_conf += p.Plotter.plot_starter()
