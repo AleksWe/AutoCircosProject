@@ -22,6 +22,31 @@ class Plotter:
         karyotype = file
         return 'karyotype = ' + karyotype + '\n'
 
+    def highlighter(self):
+        result = f"""
+            <highlights>
+            
+            z = 10
+            fill_color = lgrey
+            
+            <highlight>
+            file       = {self.file}
+            r0         = 1.0r
+            r1         = 1.5r
+            </highlight>
+            
+            <highlight>
+            file       = {self.file}
+            r0         = 0.2r
+            r1         = 1.0r
+            </highlight>
+            
+            
+            </highlights>
+        """
+        result = result.replace(' ', '')
+        return result
+
     def name_plotter(self):
         result = f"""<plot>
             type       = text

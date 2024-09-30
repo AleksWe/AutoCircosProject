@@ -1,5 +1,6 @@
 import configparser
 import os
+import shutil
 from pathlib import Path
 
 import uvicorn
@@ -54,6 +55,25 @@ async def upload(options: List[str] = Form(...),
         finally:
             file.file.close()
 
+    # TODO: Chloe to be run only if user chooses to do so:
+    # Run Chloe shell to annotate genes:
+    for file in files:
+        if file.filename.endswith('fasta') or file.filename.endswith('fa'):
+            if not os.path.exists('./chloe/'):
+                os.makedirs('./chloe/')
+            shutil.move(file.filename, './chloe/')
+    try:
+        subprocess.run('./chloe_runner.sh')
+    except FileNotFoundError as e:
+        print("Fasta file not found in folder. ERROR:", e)
+
+    # Run script that generates gene_names, highlights, karyotype:
+    try:
+        subprocess.call(['python3', 'file_creating.py'])
+    except FileNotFoundError as e:
+        print("The .gff3 file not found in folder. ERROR:", e)
+
+    # Create config metadata.ini and overwrite it
     config = config_creator(meta_data)
 
     if not config.has_section('MetaData'):
@@ -61,17 +81,20 @@ async def upload(options: List[str] = Form(...),
     if not config.has_section('OverallPlotInfo'):
         config.add_section('OverallPlotInfo')
 
+    # TODO: files below are not to be created based off of option chosen by the user (annotate or not, that is the question) ????
+    for file in os.listdir(os.getcwd()):
+        if file.find('karyotype') >= 0:  # for improvement
+            config.set('MetaData', 'karyotype', file)
+        elif file.find('gene_name') >= 0:  # for improvement
+            config.set('MetaData', 'gene_name', file)
+        elif file.find('highlights') >= 0:  # for improvement
+            config.set('MetaData', 'highlights', file)
+
+    # TODO: loop below for improvement - after user inserts only single file it will become useless
     #fasta_iter = 1 # variable for future development of more than single fasta file
     for file in files:
         if file.filename.endswith('fasta'):
             config.set('MetaData', f'fasta', file.filename)
-            # fasta_iter += 1
-        elif file.filename.find('karyotype') >= 0:  # for improvement
-            config.set('MetaData', 'karyotype', file.filename)
-        elif file.filename.find('gene_name') >= 0:  # for improvement
-            config.set('MetaData', 'gene_name', file.filename)
-
-    for file in files:
         for option in selected_options:
             if file.filename.find('snp') >= 0 and option == 'SNP':
                 if file.filename.endswith('perc.txt'):
@@ -93,6 +116,7 @@ async def upload(options: List[str] = Form(...),
     # Overwriting metadata.ini file:
     config_writer(meta_data, config)
 
+    # Run the circos shell file:
     subprocess.run('./circos_project.sh', shell=True)
     return {"message": f"Successfuly uploaded... Circos generator task completed."}
 
@@ -104,5 +128,5 @@ def get_form(request: Request):
 
 
 # Only for testing purposes
-#if __name__ == '__main__':
-#    uvicorn.run(app, host='127.0.0.1', port=8000)
+if __name__ == '__main__':
+    uvicorn.run(app, host='127.0.0.1', port=8000)

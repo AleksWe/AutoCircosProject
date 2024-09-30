@@ -65,6 +65,10 @@ def plot_generator(config):
         r0, r1 = f'{starting_point}r', f'{starting_point + 0.100}r'
         # For much needed improvement!!! ε=ε=ε=┏(゜ロ゜;)┛
         # TODO: add checker for file - there must be 3 plots for snp, 3 for ind, 1 for p_div
+        if config.has_option('MetaData', 'highlights'):
+            file_name = config.get('MetaData', 'highlights')
+            plotter_one = p.Plotter(file=file_name)
+            new_circos_conf += plotter_one.highlighter()
         if config.has_option('MetaData', 'gene_name'):
             file_name = config.get('MetaData', 'gene_name')
             plotter_one = p.Plotter(file=file_name)

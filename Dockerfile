@@ -1,11 +1,4 @@
-# Use the official Ubuntu image
-FROM ubuntu:jammy
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-
-# Install necessary python packages
-RUN apt-get update && \
-    apt-get install -y python3 python3-pip wget
-
+#### R
 # Base R image
 FROM rocker/r-base:latest
 
@@ -14,11 +7,51 @@ RUN install2.r --error \
     spider \
     ape
 
+# Clean up package lists to reduce image size
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+#### Ubuntu with Julia
+# Use the official Ubuntu image
+FROM ubuntu:jammy
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+#RUN apt-get install --assume-yes git && apt-get update && apt-get clean all \
+
+# Set the work directory
+WORKDIR /usr/src/app
+
+# Install necessary packages (git, python, curl, wget)
+RUN apt-get update && \
+    apt-get install --assume-yes git && \
+    apt-get install -y python3 python3-pip wget curl
+
+## Julia and Chloe:
+# Install Julia
+RUN wget https://julialang-s3.julialang.org/bin/linux/x64/1.9/julia-1.9.3-linux-x86_64.tar.gz && \
+    tar -xvzf julia-1.9.3-linux-x86_64.tar.gz && \
+    mv julia-1.9.3 /opt/julia && \
+    ln -s /opt/julia/bin/julia /usr/local/bin/julia
+#RUN curl -fsSL https://install.julialang.org | sh -s -- --yes
+
+# Install Julia packages
+#RUN julia -e 'using Pkg; Pkg.add(["HTTP", "CSV", "DataFrames"])'
+
+# Cloning Chloe repository and mandatory Chleo references
+RUN git clone https://github.com/ian-small/chloe && \
+    git clone --depth 1 https://github.com/ian-small/chloe_references
+
+# Change directory to chloe, run `Pkg.instantiate()` to install dependencies based on the Project.toml file
+#RUN julia -e 'import Pkg; Pkg.instantiate()'
+RUN cd chloe && julia --project=. -e 'using Pkg; Pkg.instantiate();' && cd ..
+
+# Set the work directory
+#WORKDIR /usr/src/app
+
 # Copy folder files to current directory
 COPY . .
 
 # Install mamba solver for python venv
-RUN wget -O Miniforge3.sh "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-24.3.0-0-Linux-x86_64.sh"
+RUN wget -O Miniforge3.sh "https://github.com/conda-forge/miniforge/releases/download/24.3.0-0/Miniforge3-24.3.0-0-Linux-x86_64.sh"
 RUN bash Miniforge3.sh -b -p /opt/conda && \
     rm Miniforge3.sh
     
