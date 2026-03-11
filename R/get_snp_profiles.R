@@ -9,6 +9,7 @@
 #'         and columns represent the frequencies of bases (a, c, g, t, -, etc.).
 #' @importFrom ape read.dna seg.sites base.freq
 #' @export
+
 get_snp_profiles <- function(alignment_path) {
   
   if (!file.exists(alignment_path)) {
