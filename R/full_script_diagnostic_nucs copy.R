@@ -1,6 +1,11 @@
 library(ape)
 library(spider)
 
+samples_table <- data.frame(FASTA_id = c("Trichoderma_virens","Trichoderma_atroviride","Trichoderma_parareesei","Trichoderma_LY357","Trichoderma_longibrachiatum","Trichoderma_gamsii"),
+                            FASTA_path = c(path1,path2,path3,path4,path5,path6),
+                            group = c("A","A","A","B","B","B"))
+
+
 ### Rubia alignment
 dat_rub <- read.dna("Rubia_align.fasta", format = "fasta")
 dimnames(dat_rub)[[1]] <- c("Rubia_yunnanensis", "Rubia_podantha", "Rubia_cordifolia")
