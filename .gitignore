@@ -5,3 +5,9 @@
 
 # Convert to LF line endings on checkout.
 *.sh text eol=lf
+
+# Random data, results and files to ignore
+/data
+metadata.ini
+circos*.png
+Galium_test.chloe.gff
